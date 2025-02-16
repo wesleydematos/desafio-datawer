@@ -12,6 +12,7 @@ export default function Header({ children }: HeaderProps) {
         boxShadow: "none",
         paddingX: 3,
         paddingY: 1.5,
+        height: "88px",
       }}
     >
       <Toolbar
