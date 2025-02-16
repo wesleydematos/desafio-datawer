@@ -21,6 +21,7 @@ import { IProfessional } from "@/app/api/professionals/route";
 import { API_ROUTES } from "@/constants";
 import { useToast } from "@/providers";
 import ConfirmDeleteModal from "../ConfirmDeleteModal";
+import EditProfessionalModal from "../EditProfessionalModal";
 
 export default function ProfessionalsTable() {
   const queryClient = useQueryClient();
@@ -31,6 +32,7 @@ export default function ProfessionalsTable() {
   const [selectedProfessional, setSelectedProfessional] =
     useState<IProfessional | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const fetchProfessionals = async () => {
     const response = await fetch(
@@ -65,6 +67,34 @@ export default function ProfessionalsTable() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async ({
+      id,
+      qualifications,
+    }: {
+      id: string;
+      qualifications: string;
+    }) => {
+      const response = await fetch(`/api/${API_ROUTES.PROFESSIONALS}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ qualifications }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar qualificação.");
+      }
+    },
+    onSuccess: () => {
+      showToast("Qualificação atualizada com sucesso!", "success");
+      queryClient.invalidateQueries({ queryKey: ["professionals"] });
+      setEditModalOpen(false);
+    },
+    onError: () => {
+      showToast("Erro ao atualizar qualificação.", "error");
+    },
+  });
+
   const professionals = data?.professionals || [];
   const totalProfessionals = data?.total || 0;
 
@@ -92,7 +122,13 @@ export default function ProfessionalsTable() {
                 <TableCell>{professional.email}</TableCell>
                 <TableCell>{professional.qualifications}</TableCell>
                 <TableCell>
-                  <IconButton color="primary">
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      setSelectedProfessional(professional);
+                      setEditModalOpen(true);
+                    }}
+                  >
                     <Edit />
                   </IconButton>
                   <IconButton
@@ -139,6 +175,21 @@ export default function ProfessionalsTable() {
         }
         isLoading={deleteMutation.isPending}
         professionalName={selectedProfessional?.name}
+      />
+
+      <EditProfessionalModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={(updatedQualification) =>
+          selectedProfessional &&
+          updateMutation.mutate({
+            id: selectedProfessional.id,
+            qualifications: updatedQualification,
+          })
+        }
+        isLoading={updateMutation.isPending}
+        professionalName={selectedProfessional?.name}
+        currentQualification={selectedProfessional?.qualifications}
       />
     </>
   );
