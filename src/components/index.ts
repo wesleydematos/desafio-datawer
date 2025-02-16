@@ -1,3 +1,7 @@
 import Header from "./Header";
+import {
+  AddProfessionalModal,
+  ProfessionalsTable,
+} from "./DashboardComponents";
 
-export { Header };
+export { Header, AddProfessionalModal, ProfessionalsTable };
