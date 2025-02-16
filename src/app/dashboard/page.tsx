@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Container, Typography, Button, Box } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import { APP_ROUTES } from "@/constants";
 import { Header, AddProfessionalModal, ProfessionalsTable } from "@/components";
 
@@ -15,7 +21,19 @@ export default function Dashboard() {
   const isAdm = session?.user.role === "ADMIN";
 
   if (status === "loading") {
-    return <Typography color="white">Carregando...</Typography>;
+    return (
+      <Box
+        sx={{
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (!session) {
@@ -42,7 +60,7 @@ export default function Dashboard() {
         </Button>
       </Header>
 
-      <Container sx={{ marginTop: "88px" }}>
+      <Container sx={{ marginTop: "88px", marginBottom: "20px" }}>
         {isAdm ? (
           <>
             <Box
@@ -51,7 +69,7 @@ export default function Dashboard() {
               justifyContent="space-between"
               mb={2}
             >
-              <Typography variant="h5" color="white">
+              <Typography variant="h5" color="primary">
                 Lista de Profissionais
               </Typography>
               <Button
