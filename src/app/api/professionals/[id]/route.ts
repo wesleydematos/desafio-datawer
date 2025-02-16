@@ -12,7 +12,10 @@ export async function PATCH(
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+    return NextResponse.json(
+      { error: "Acesso negado." },
+      { status: 403, statusText: "Acesso negado." }
+    );
   }
 
   try {
@@ -23,12 +26,14 @@ export async function PATCH(
       data: { qualifications },
     });
 
-    return NextResponse.json(updatedProfessional, { status: 200 });
-  } catch (error) {
-    console.log(error);
+    return NextResponse.json(updatedProfessional, {
+      status: 200,
+      statusText: "Qualificação atualizada com sucesso!",
+    });
+  } catch {
     return NextResponse.json(
       { error: "Erro ao atualizar profissional." },
-      { status: 500 }
+      { status: 500, statusText: "Erro ao atualizar profissional." }
     );
   }
 }
@@ -40,7 +45,10 @@ export async function DELETE(
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+    return NextResponse.json(
+      { error: "Acesso negado." },
+      { status: 403, statusText: "Acesso negado." }
+    );
   }
 
   try {
@@ -50,13 +58,12 @@ export async function DELETE(
 
     return NextResponse.json(
       { message: "Profissional removido com sucesso." },
-      { status: 200 }
+      { status: 200, statusText: "Profissional removido com sucesso." }
     );
-  } catch (error) {
-    console.log(error);
+  } catch {
     return NextResponse.json(
       { error: "Erro ao excluir profissional." },
-      { status: 500 }
+      { status: 500, statusText: "Erro ao excluir profissional." }
     );
   }
 }
