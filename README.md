@@ -19,7 +19,7 @@ A **DataWer** é uma plataforma de gestão de profissionais onde usuários com a
 
 ```sh
 git clone https://github.com/wesleydematos/desafio-datawer.git
-cd nome-do-repositorio
+cd desafio-datawer
 ```
 
 ### 2. Instalar Dependências
