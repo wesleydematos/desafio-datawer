@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import ThemeRegistry from "@/styles/ThemeRegistry";
-import { AuthProvider, ToastProvider } from "@/providers";
+import { AuthProvider, ToastProvider, ReactQueryProvider } from "@/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +25,11 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          <ToastProvider>
-            <ThemeRegistry>{children}</ThemeRegistry>
-          </ToastProvider>
+          <ReactQueryProvider>
+            <ToastProvider>
+              <ThemeRegistry>{children}</ThemeRegistry>
+            </ToastProvider>
+          </ReactQueryProvider>
         </AuthProvider>
       </body>
     </html>
