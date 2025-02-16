@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_ROUTES } from "@/constants";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -32,7 +33,7 @@ export default function AddProfessionalModal({
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/professionals", {
+      const response = await fetch(`/api${API_ROUTES.PROFESSIONALS}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, qualifications }),

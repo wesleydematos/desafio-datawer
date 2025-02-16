@@ -18,14 +18,15 @@ import {
 import { Edit, Delete } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 import { IProfessional } from "@/app/api/professionals/route";
+import { API_ROUTES } from "@/constants";
 
 export default function ProfessionalsTable() {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const fetchProfessionals = async () => {
     const response = await fetch(
-      `/api/professionals?page=${page + 1}&limit=${rowsPerPage}`
+      `/api/${API_ROUTES.PROFESSIONALS}?page=${page + 1}&limit=${rowsPerPage}`
     );
     if (!response.ok) throw new Error("Erro ao carregar profissionais");
     return response.json();
@@ -41,12 +42,12 @@ export default function ProfessionalsTable() {
 
   return (
     <>
-      {isLoading && <CircularProgress />}
       {isError && (
         <Typography color="error">Erro ao carregar profissionais</Typography>
       )}
 
       <TableContainer component={Paper}>
+        {isLoading && <CircularProgress />}
         <Table>
           <TableHead>
             <TableRow>
