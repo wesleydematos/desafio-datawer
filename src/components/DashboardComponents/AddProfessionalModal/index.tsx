@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ROUTES } from "@/constants";
+import { useToast } from "@/providers";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -26,10 +27,12 @@ export default function AddProfessionalModal({
   open,
   onClose,
 }: AddProfessionalModalProps) {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [qualifications, setQualifications] = useState("");
-  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -39,9 +42,11 @@ export default function AddProfessionalModal({
         body: JSON.stringify({ name, email, qualifications }),
       });
 
-      if (!response.ok) throw new Error("Erro ao adicionar profissional");
-      console.log(response);
-      return response.json();
+      if (!response.ok) {
+        showToast(response.statusText, "error");
+      } else {
+        showToast("Profissional registrado com sucesso!", "success");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["professionals"] });
