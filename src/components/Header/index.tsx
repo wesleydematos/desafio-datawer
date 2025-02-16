@@ -3,12 +3,12 @@ import { HeaderProps } from "./types";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 
-export default function Header({ children }: HeaderProps) {
+export default function Header({ children, withBackground }: HeaderProps) {
   return (
     <AppBar
       position="fixed"
       sx={{
-        background: "transparent",
+        background: withBackground ? "#211d33" : "transparent",
         boxShadow: "none",
         paddingX: 3,
         paddingY: 1.5,

@@ -51,7 +51,7 @@ export default function Dashboard() {
         backgroundColor: "background",
       }}
     >
-      <Header>
+      <Header withBackground>
         <Button
           variant="contained"
           onClick={() => signOut({ callbackUrl: APP_ROUTES.LOGIN })}
@@ -70,7 +70,7 @@ export default function Dashboard() {
               mb={2}
             >
               <Typography variant="h5" color="primary">
-                Lista de Profissionais
+                PROFISSIONAIS
               </Typography>
               <Button
                 variant="contained"
