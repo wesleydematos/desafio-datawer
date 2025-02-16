@@ -11,7 +11,12 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { APP_ROUTES } from "@/constants";
-import { Header, AddProfessionalModal, ProfessionalsTable } from "@/components";
+import {
+  Header,
+  AddProfessionalModal,
+  ProfessionalsTable,
+  EmptyState,
+} from "@/components";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -89,9 +94,7 @@ export default function Dashboard() {
             />
           </>
         ) : (
-          <Typography variant="h4" color="white">
-            Dashboard
-          </Typography>
+          <EmptyState text="Nenhuma funcionalidade disponível para o seu perfil no momento..." />
         )}
       </Container>
     </Box>
