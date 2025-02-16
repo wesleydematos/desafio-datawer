@@ -1,3 +1,7 @@
 import { loginSchema } from "./loginSchema";
+import {
+  professionalSchema,
+  editProfessionalSchema,
+} from "./professionalSchema";
 
-export { loginSchema };
+export { loginSchema, professionalSchema, editProfessionalSchema };

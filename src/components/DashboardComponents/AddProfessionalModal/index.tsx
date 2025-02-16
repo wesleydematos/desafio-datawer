@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_ROUTES } from "@/constants";
 import { useToast } from "@/providers";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { professionalSchema } from "@/schemas";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -30,33 +33,48 @@ export default function AddProfessionalModal({
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [qualifications, setQualifications] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<z.infer<typeof professionalSchema>>({
+    resolver: zodResolver(professionalSchema),
+  });
 
   const mutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (data: {
+      name: string;
+      email: string;
+      qualifications: string;
+    }) => {
       const response = await fetch(`/api${API_ROUTES.PROFESSIONALS}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, qualifications }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        showToast(response.statusText, "error");
-      } else {
-        showToast("Profissional registrado com sucesso!", "success");
+        throw new Error(response.statusText);
       }
     },
     onSuccess: () => {
+      showToast("Profissional registrado com sucesso!", "success");
       queryClient.invalidateQueries({ queryKey: ["professionals"] });
       onClose();
+      reset();
+    },
+    onError: (error) => {
+      showToast(error.message, "error");
     },
   });
 
-  const handleSubmit = () => {
-    if (!name || !email || !qualifications) return;
-    mutation.mutate();
+  const onSubmit = (data: {
+    name: string;
+    email: string;
+    qualifications: string;
+  }) => {
+    mutation.mutate(data);
   };
 
   return (
@@ -64,38 +82,45 @@ export default function AddProfessionalModal({
       <Box sx={modalStyle}>
         <Typography variant="h6">Adicionar Profissional</Typography>
 
-        <TextField
-          label="Nome"
-          fullWidth
-          margin="normal"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <TextField
-          label="Email"
-          type="email"
-          fullWidth
-          margin="normal"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          label="Qualificações"
-          fullWidth
-          margin="normal"
-          value={qualifications}
-          onChange={(e) => setQualifications(e.target.value)}
-        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <TextField
+            label="Nome"
+            fullWidth
+            margin="normal"
+            {...register("name")}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
 
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={handleSubmit}
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending ? "Adicionando..." : "Adicionar"}
-        </Button>
+          <TextField
+            label="Email"
+            type="email"
+            fullWidth
+            margin="normal"
+            {...register("email")}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />
+
+          <TextField
+            label="Qualificações"
+            fullWidth
+            margin="normal"
+            {...register("qualifications")}
+            error={!!errors.qualifications}
+            helperText={errors.qualifications?.message}
+          />
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? "Adicionando..." : "Adicionar"}
+          </Button>
+        </form>
       </Box>
     </Modal>
   );
