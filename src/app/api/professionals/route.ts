@@ -36,11 +36,10 @@ export async function GET(req: Request) {
       },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Erro ao buscar profissionais:", error);
+  } catch {
     return NextResponse.json(
       { error: "Erro ao buscar profissionais." },
-      { status: 500 }
+      { status: 500, statusText: "Erro ao buscar profissionais." }
     );
   }
 }
@@ -49,21 +48,23 @@ export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+    return NextResponse.json(
+      { error: "Acesso negado." },
+      { status: 403, statusText: "Acesso negado." }
+    );
   }
 
   try {
     const { name, email, qualifications } = await req.json();
 
-    // Verifica se o email já existe
     const existingProfessional = await prisma.professional.findUnique({
       where: { email },
     });
 
     if (existingProfessional) {
       return NextResponse.json(
-        { error: "Email já cadastrado." },
-        { status: 400 }
+        { error: "Email em uso." },
+        { status: 400, statusText: "Email em uso." }
       );
     }
 
@@ -72,11 +73,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(newProfessional, { status: 201 });
-  } catch (error) {
-    console.log(error);
+  } catch {
     return NextResponse.json(
       { error: "Erro ao criar profissional." },
-      { status: 500 }
+      { status: 500, statusText: "Erro ao criar profissional." }
     );
   }
 }
