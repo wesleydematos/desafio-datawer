@@ -39,6 +39,15 @@ const theme = createTheme({
       disabled: "rgba(0, 0, 0, 0.54)",
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff",
+        },
+      },
+    },
+  },
 });
 
 export default theme;
