@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Container, Typography, Button, Box } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { APP_ROUTES } from "@/constants";
 import { Header } from "@/components";
@@ -14,7 +13,6 @@ import ProfessionalsImage from "@/assets/images/professionals.jpg";
 export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
-  const theme = useTheme();
 
   useEffect(() => {
     if (session) {
@@ -40,7 +38,7 @@ export default function Home() {
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundColor: theme.palette.action.disabled,
+          backgroundColor: "action.disabled",
           zIndex: 1,
         },
         "& > *": {
@@ -63,7 +61,7 @@ export default function Home() {
         maxWidth="xl"
         sx={{
           textAlign: "center",
-          color: theme.palette.common.white,
+          color: "common.white",
           p: 3,
           borderRadius: 2,
         }}
