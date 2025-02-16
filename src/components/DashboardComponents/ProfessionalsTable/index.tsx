@@ -16,13 +16,21 @@ import {
   Box,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { IProfessional } from "@/app/api/professionals/route";
 import { API_ROUTES } from "@/constants";
+import { useToast } from "@/providers";
+import ConfirmDeleteModal from "../ConfirmDeleteModal";
 
 export default function ProfessionalsTable() {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedProfessional, setSelectedProfessional] =
+    useState<IProfessional | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const fetchProfessionals = async () => {
     const response = await fetch(
@@ -35,6 +43,26 @@ export default function ProfessionalsTable() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["professionals", page, rowsPerPage],
     queryFn: fetchProfessionals,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/${API_ROUTES.PROFESSIONALS}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao excluir profissional.");
+      }
+    },
+    onSuccess: () => {
+      showToast("Profissional removido com sucesso!", "success");
+      queryClient.invalidateQueries({ queryKey: ["professionals"] });
+      setDeleteModalOpen(false);
+    },
+    onError: () => {
+      showToast("Erro ao excluir profissional.", "error");
+    },
   });
 
   const professionals = data?.professionals || [];
@@ -58,16 +86,22 @@ export default function ProfessionalsTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {professionals.map((prof: IProfessional) => (
-              <TableRow key={prof.id}>
-                <TableCell>{prof.name}</TableCell>
-                <TableCell>{prof.email}</TableCell>
-                <TableCell>{prof.qualifications}</TableCell>
+            {professionals.map((professional: IProfessional) => (
+              <TableRow key={professional.id}>
+                <TableCell>{professional.name}</TableCell>
+                <TableCell>{professional.email}</TableCell>
+                <TableCell>{professional.qualifications}</TableCell>
                 <TableCell>
                   <IconButton color="primary">
                     <Edit />
                   </IconButton>
-                  <IconButton color="secondary">
+                  <IconButton
+                    color="secondary"
+                    onClick={() => {
+                      setSelectedProfessional(professional);
+                      setDeleteModalOpen(true);
+                    }}
+                  >
                     <Delete />
                   </IconButton>
                 </TableCell>
@@ -96,6 +130,16 @@ export default function ProfessionalsTable() {
           }}
         />
       </Box>
+
+      <ConfirmDeleteModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={() =>
+          selectedProfessional && deleteMutation.mutate(selectedProfessional.id)
+        }
+        isLoading={deleteMutation.isPending}
+        professionalName={selectedProfessional?.name}
+      />
     </>
   );
 }
