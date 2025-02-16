@@ -3,10 +3,7 @@
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
 import emptyStateImage from "@/assets/images/empty-state.png";
-
-interface EmptyStateProps {
-  text: string;
-}
+import { EmptyStateProps } from "./types";
 
 export default function EmptyState({ text }: EmptyStateProps) {
   return (

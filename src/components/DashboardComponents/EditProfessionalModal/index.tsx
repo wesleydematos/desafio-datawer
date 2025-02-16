@@ -9,15 +9,7 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-
-interface EditProfessionalModalProps {
-  open: boolean;
-  onClose: () => void;
-  onSave: (updatedQualification: string) => void;
-  isLoading?: boolean;
-  professionalName?: string;
-  currentQualification?: string;
-}
+import { EditProfessionalModalProps } from "./types";
 
 export default function EditProfessionalModal({
   open,

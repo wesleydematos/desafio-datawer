@@ -1,14 +1,7 @@
 "use client";
 
 import { Modal, Box, Typography, Button } from "@mui/material";
-
-interface ConfirmDeleteModalProps {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  isLoading?: boolean;
-  professionalName?: string;
-}
+import { ConfirmDeleteModalProps } from "./types";
 
 export default function ConfirmDeleteModal({
   open,

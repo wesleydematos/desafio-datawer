@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { professionalSchema } from "@/schemas";
+import { AddProfessionalModalProps } from "./types";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -20,11 +21,6 @@ const modalStyle = {
   p: 4,
   borderRadius: 2,
 };
-
-interface AddProfessionalModalProps {
-  open: boolean;
-  onClose: () => void;
-}
 
 export default function AddProfessionalModal({
   open,
