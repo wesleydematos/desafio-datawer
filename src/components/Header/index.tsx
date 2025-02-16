@@ -24,7 +24,11 @@ export default function Header({ children }: HeaderProps) {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Image src={logo} alt="Logo" width={50} height={50} priority />
           <Typography
-            sx={{ color: "white", fontWeight: "bold", fontSize: "1.5rem" }}
+            sx={{
+              color: "white",
+              fontWeight: "bold",
+              fontSize: { xs: "1rem", sm: "1.2rem", md: "1.5rem" },
+            }}
           >
             Professional Manager
           </Typography>
