@@ -19,7 +19,7 @@ model Professional {
   id             String @id @default(uuid())
   name           String
   email          String @unique
-  qualifications String
+  qualifications Json
 }
 
 enum Role {

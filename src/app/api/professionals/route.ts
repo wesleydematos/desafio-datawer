@@ -9,7 +9,7 @@ export interface IProfessional {
   id: string;
   name: string;
   email: string;
-  qualifications: string;
+  qualifications: string[];
 }
 
 export async function GET(req: Request) {
@@ -27,9 +27,16 @@ export async function GET(req: Request) {
       prisma.professional.count(),
     ]);
 
+    const formattedProfessionals = professionals.map((prof) => ({
+      ...prof,
+      qualifications: Array.isArray(prof.qualifications)
+        ? prof.qualifications
+        : [],
+    }));
+
     return NextResponse.json(
       {
-        professionals,
+        professionals: formattedProfessionals,
         total,
         totalPages: Math.ceil(total / limit),
         currentPage: page,
@@ -57,6 +64,13 @@ export async function POST(req: Request) {
   try {
     const { name, email, qualifications } = await req.json();
 
+    if (!Array.isArray(qualifications)) {
+      return NextResponse.json(
+        { error: "Qualificações devem ser um array de strings." },
+        { status: 400, statusText: "Dados inválidos." }
+      );
+    }
+
     const existingProfessional = await prisma.professional.findUnique({
       where: { email },
     });
@@ -69,7 +83,11 @@ export async function POST(req: Request) {
     }
 
     const newProfessional = await prisma.professional.create({
-      data: { name, email, qualifications },
+      data: {
+        name,
+        email,
+        qualifications,
+      },
     });
 
     return NextResponse.json(newProfessional, { status: 201 });
