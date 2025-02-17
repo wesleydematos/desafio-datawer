@@ -21,6 +21,16 @@ export async function PATCH(
   try {
     const { qualifications } = await req.json();
 
+    if (
+      !Array.isArray(qualifications) ||
+      !qualifications.every((q) => typeof q === "string")
+    ) {
+      return NextResponse.json(
+        { error: "Qualificações devem ser um array de strings." },
+        { status: 400, statusText: "Dados inválidos." }
+      );
+    }
+
     const updatedProfessional = await prisma.professional.update({
       where: { id: params.id },
       data: { qualifications },
@@ -28,7 +38,7 @@ export async function PATCH(
 
     return NextResponse.json(updatedProfessional, {
       status: 200,
-      statusText: "Qualificação atualizada com sucesso!",
+      statusText: "Qualificações atualizadas com sucesso!",
     });
   } catch {
     return NextResponse.json(

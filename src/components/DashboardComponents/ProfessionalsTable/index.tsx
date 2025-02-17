@@ -14,6 +14,7 @@ import {
   IconButton,
   Typography,
   Box,
+  Chip,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -73,7 +74,7 @@ export default function ProfessionalsTable() {
       qualifications,
     }: {
       id: string;
-      qualifications: string;
+      qualifications: string[];
     }) => {
       const response = await fetch(`/api/${API_ROUTES.PROFESSIONALS}/${id}`, {
         method: "PATCH",
@@ -111,7 +112,9 @@ export default function ProfessionalsTable() {
             <TableRow>
               <TableCell sx={{ color: "primary.main" }}>NOME</TableCell>
               <TableCell sx={{ color: "primary.main" }}>EMAIL</TableCell>
-              <TableCell sx={{ color: "primary.main" }}>QUALIFICAÇÃO</TableCell>
+              <TableCell sx={{ color: "primary.main" }}>
+                QUALIFICAÇÕES
+              </TableCell>
               <TableCell sx={{ color: "primary.main" }}>AÇÕES</TableCell>
             </TableRow>
           </TableHead>
@@ -120,7 +123,23 @@ export default function ProfessionalsTable() {
               <TableRow key={professional.id}>
                 <TableCell>{professional.name}</TableCell>
                 <TableCell>{professional.email}</TableCell>
-                <TableCell>{professional.qualifications}</TableCell>
+                <TableCell>
+                  {Array.isArray(professional.qualifications) ? (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {professional.qualifications.map(
+                        (qualification, index) => (
+                          <Chip
+                            key={index}
+                            label={qualification}
+                            color="primary"
+                          />
+                        )
+                      )}
+                    </Box>
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
                 <TableCell>
                   <IconButton
                     color="primary"
@@ -180,16 +199,16 @@ export default function ProfessionalsTable() {
       <EditProfessionalModal
         open={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        onSave={(updatedQualification) =>
+        onSave={(updatedQualifications) =>
           selectedProfessional &&
           updateMutation.mutate({
             id: selectedProfessional.id,
-            qualifications: updatedQualification,
+            qualifications: updatedQualifications,
           })
         }
         isLoading={updateMutation.isPending}
         professionalName={selectedProfessional?.name}
-        currentQualification={selectedProfessional?.qualifications}
+        currentQualifications={selectedProfessional?.qualifications || []}
       />
     </>
   );

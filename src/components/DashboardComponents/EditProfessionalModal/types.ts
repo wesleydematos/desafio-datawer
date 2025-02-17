@@ -1,8 +1,8 @@
 export interface EditProfessionalModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (updatedQualification: string) => void;
+  onSave: (updatedQualifications: string[]) => void;
   isLoading?: boolean;
   professionalName?: string;
-  currentQualification?: string;
+  currentQualifications?: string[];
 }

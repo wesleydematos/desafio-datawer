@@ -42,7 +42,7 @@ export default function AddProfessionalModal({
     mutationFn: async (data: {
       name: string;
       email: string;
-      qualifications: string;
+      qualifications: string[];
     }) => {
       const response = await fetch(`/api${API_ROUTES.PROFESSIONALS}`, {
         method: "POST",
@@ -70,7 +70,11 @@ export default function AddProfessionalModal({
     email: string;
     qualifications: string;
   }) => {
-    mutation.mutate(data);
+    const formattedData = {
+      ...data,
+      qualifications: data.qualifications.split(",").map((q) => q.trim()),
+    };
+    mutation.mutate(formattedData);
   };
 
   return (
@@ -99,7 +103,7 @@ export default function AddProfessionalModal({
           />
 
           <TextField
-            label="Qualificações"
+            label="Qualificações (separadas por vírgula)"
             fullWidth
             margin="normal"
             {...register("qualifications")}
